@@ -1,57 +1,81 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const validator = require('../validators/coursesValidations');
+const { genreValidator } = require("../validators/validator");
+const { Genre } = require("../models/genre");
+const mongoose = require('mongoose');
 
-router.get('/api/genres', (req, res)=>{
-    res.send(genres);
+router.get("/", async (req, res) => {
+  const genres = await Genre.find().sort({ name: 1 });
+  res.send(genres);
 });
 
-router.get('/api/genres/:id', (req, res)=>{
-    const genre = genres.find( genre => genre.id === parseInt(req.params.id));
-    if(!genre){
-        res.status(400).send('There is no genre with the given id');
-        return;
-    };
-    res.send(genre);
+router.get("/:id", async (req, res) => {
+  const idGenre = mongoose.Types.ObjectId.isValid(req.params.id);
+  if (!idGenre) {
+    res.status(400).send("Invalid genre ID");
+    return;
+  }
+  const genre = await Genre.findById(req.params.id);
+  if (!genre) {
+    res.status(400).send("There is no genre with the given id");
+    return;
+  }
+  res.send(genre);
 });
 
-router.post('/api/genres', (req, res)=>{
-    const { error } = validator.validationGenres(req.body);
-    if(error){
-        res.status(400).send(error.details[0].message);
-        return;
+router.post("/", async (req, res) => {
+  const { error } = genreValidator(req.body);
+  if (error) {
+    res.status(400).send(error.details[0].message);
+    return;
+  }
+  let genre = new Genre({
+    name: req.body.name,
+  });
+  try {
+    genre = await genre.save();
+    return res.send(genre);
+  } catch (err) {
+    for (fields in err.errors) {
+      console.log(err.errors[fields].message);
     }
-    const genre = {
-        id: genres.length + 1,
-        name: req.body.name
-    }
-    res.send(genre);
+  }
 });
 
-router.put('/api/genres/:id', (req, res)=>{
-    const genre = genres.find( genre => genre.id === parseInt(req.params.id));
-    if(!genre){
-        res.status(404).send('There is no gender with the given ID');
-        return;
-    }
-    const { error } = validator.validationGenres(req.body);
-    if(error){
-        res.status(400).send(error.details[0].message);
-        return;
-    }
-    genre.name = req.body.name;
-    res.send(genre);
+router.put("/:id", async (req, res) => {
+  const idGenre = mongoose.Types.ObjectId.isValid(req.params.id);
+  if (!idGenre) {
+    res.status(400).send("Invalid genre ID");
+    return;
+  }
+  const genre = await Genre.findById(req.params.id);
+  if (!genre) {
+    res.status(404).send("There is no gender with the given ID");
+    return;
+  }
+  const { error } = genreValidator(req.body);
+  if (error) {
+    res.status(400).send(error.details[0].message);
+    return;
+  }
+  const result = await Genre.updateOne(genre, { name: req.body.name });
+  res.send(result);
 });
 
-router.delete('/api/genres/:id', (req, res)=>{
-    const genre = genres.find( genre => genre.id === parseInt(req.params.id));
-    if(!genre){
-        res.status(400).send('There is no gender with the given ID');
-        return;
-    }
-    const index = genres.indexOf(genre);
-    genres.splice(index, 1);
-    res.send(genre);
+router.delete("/:id", async (req, res) => {
+  const idGenre = mongoose.Types.ObjectId.isValid(req.params.id);
+  if (!idGenre) {
+    res.status(400).send("Invalid genre ID");
+    return;
+  }
+  const genre = await Genre.findById(req.params.id);
+  if (!genre) {
+    res.status(400).send("There is no gender with the given ID");
+    return;
+  }
+  console.log(genre._id);
+  await Genre.deleteOne({ _id: genre._id });
+  res.send(genre);
 });
 
 module.exports = router;
