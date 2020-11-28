@@ -21,7 +21,7 @@ router.post("/", async (req, res) => {
     res.status(400).send("There is no genre with the given ID");
     return;
   }
-  let movie = new Movie({
+  const movie = new Movie({
     title: req.body.title,
     genre: {
       _id: genre._id,
@@ -31,7 +31,7 @@ router.post("/", async (req, res) => {
     dailyRentalRate: req.body.dailyRentalRate,
   });
   try {
-    movie = await movie.save();
+    await movie.save();
     return res.send(movie);
   } catch (err) {
     for (fields in err.errors) {

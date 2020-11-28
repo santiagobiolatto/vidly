@@ -35,7 +35,7 @@ router.post("/", async (req, res) => {
     return;
   }
 
-  let rental = new Rental({
+  const rental = new Rental({
     customer: {
       _id: customer._id,
       name: customer.name,

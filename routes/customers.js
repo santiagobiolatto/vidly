@@ -1,9 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const {
-  customerValidator,
-  getIdValidator,
-} = require("../validators/validator");
+const { customerValidator } = require("../validators/validator");
 const { Customer } = require("../models/customer");
 const mongoose = require("mongoose");
 
