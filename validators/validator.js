@@ -35,7 +35,27 @@ function rentalValidation(rental) {
   return schema.validate(rental);
 }
 
+function userValidation(user){
+  const schema = Joi.object({
+    name: Joi.string().min(3).max(55).required(),
+    email: Joi.string().min(3).max(95).required().email(),
+    password: Joi.string().min(3).max(1024).required(),
+  });
+  return schema.validate(user);
+}
+
+function authValidation(user){
+  const schema = Joi.object({
+    email: Joi.string().min(3).max(95).required().email(),
+    password: Joi.string().min(3).max(1024).required(),
+  });
+  return schema.validate(user);
+}
+
+
 module.exports.rentalValidation = rentalValidation;
 module.exports.genreValidator = genreValidator;
 module.exports.customerValidator = customerValidator;
 module.exports.movieValidator = movieValidator;
+module.exports.userValidation = userValidation;
+module.exports.authValidation = authValidation;

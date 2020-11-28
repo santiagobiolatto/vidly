@@ -55,14 +55,14 @@ router.get("/:id", async (req, res) => {
 });
 
 router.put("/:id", async (req, res) => {
+  const idMovie = mongoose.Types.ObjectId.isValid(req.params.id);
+  if (!idMovie) {
+    res.status(400).send("Invalid movie ID");
+    return;
+  }
   const { error } = movieValidator(req.body);
   if (error) {
     res.status(400).send(error.details[0].message);
-    return;
-  }
-  const idGenre = mongoose.Types.ObjectId.isValid(req.body.genreId);
-  if (!idGenre) {
-    res.status(400).send("Invalid genre ID");
     return;
   }
   const genre = await Genre.findById(req.body.genreId);

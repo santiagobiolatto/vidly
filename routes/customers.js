@@ -73,6 +73,11 @@ router.get("/:id", async (req, res) => {
 });
 
 router.delete("/:id", async (req, res) => {
+  const idCustomer = mongoose.Types.ObjectId.isValid(req.params.id);
+  if (!idCustomer) {
+    res.status(400).send("Invalid customer ID");
+    return;
+  }
   const customer = await Customer.findByIdAndDelete(req.params.id);
   if (!customer) {
     return res.status(400).send("The given id of customer doesn't exist");

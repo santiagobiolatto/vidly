@@ -66,4 +66,54 @@ router.post("/", async (req, res) => {
   }
 });
 
+router.get('/:id', async(req, res)=>{
+  const idRental = mongoose.Types.ObjectId.isValid(req.params.id);
+  if (!idRental) {
+    res.status(400).send("Invalid movie ID");
+    return;
+  }
+  const rental = await Rental.findById(req.params.id);
+  if(!rental){
+    res.status(400).send('There is not a rental with the given ID');
+    return;
+  }
+  res.send(rental);
+});
+
+router.put('/:id', async (req, res)=>{
+  const idRental = mongoose.Types.ObjectId.isValid(req.params.id);
+  if (!idRental) {
+    res.status(400).send("Invalid rental ID");
+    return;
+  }
+  const { error } = rentalValidation(req.body);
+  if (error) {
+    res.status(400).send(error.details[0].message);
+    return;
+  }
+  const rental = await Rental.findByIdAndUpdate(req.params.id, {
+    customerId: req.body.customerId,
+    movieId: req.body.movieId,
+  }, {new: true});
+  if(!rental){
+    res.status(400).send('There is not a rental with the given ID');
+    return;
+  }
+  req.send(rental);
+});
+
+router.delete('/:id', async(req, res)=>{
+  const idRental = mongoose.Types.ObjectId.isValid(req.params.id);
+  if (!idRental) {
+    res.status(400).send("Invalid rental ID");
+    return;
+  }
+  const rental = await Rental.findByIdAndDelete(req.params.id);
+  if(!rental){
+    res.status(400).send('There is not a rental with the given ID');
+    return;
+  }
+  res.send(rental);
+});
+
 module.exports = router;
