@@ -1,5 +1,5 @@
 const Joi = require("joi");
-Joi.objectId = require('joi-objectid')(Joi);
+Joi.objectId = require("joi-objectid")(Joi);
 
 function genreValidator(genre) {
   const schema = Joi.object({
@@ -38,4 +38,4 @@ function rentalValidation(rental) {
 module.exports.rentalValidation = rentalValidation;
 module.exports.genreValidator = genreValidator;
 module.exports.customerValidator = customerValidator;
-module.exports.movieValidator= movieValidator;
+module.exports.movieValidator = movieValidator;

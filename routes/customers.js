@@ -1,8 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const { customerValidator, getIdValidator } = require("../validators/validator");
+const {
+  customerValidator,
+  getIdValidator,
+} = require("../validators/validator");
 const { Customer } = require("../models/customer");
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 router.get("/", async (req, res) => {
   const customer = await Customer.find().sort({ name: 1 });
