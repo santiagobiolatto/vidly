@@ -1,4 +1,5 @@
 require('dotenv').config();
+
 const config ={
     env: process.env.NODE_ENV,
     mongoUri: process.env.MONGODB_URI,

@@ -1,5 +1,5 @@
 const Joi = require("joi");
-Joi.objectId = require("joi-objectid")(Joi);
+Joi.objectId = require('joi-objectid')(Joi);
 
 function genreValidator(genre) {
   const schema = Joi.object({
@@ -11,7 +11,7 @@ function genreValidator(genre) {
 function customerValidator(customer) {
   const schema = Joi.object({
     name: Joi.string().min(3).max(55).required(),
-    phone: Joi.number().min(3).max(20).required(),
+    phone: Joi.string().min(3).max(20).required(),
     isGold: Joi.boolean(),
   });
   return schema.validate(customer);
