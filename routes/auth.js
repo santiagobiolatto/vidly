@@ -3,8 +3,6 @@ const router = express.Router();
 const { authValidation } = require("../validators/validator");
 const { User } = require("../models/user");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const config = require("../config/config");
 const _ = require("lodash");
 
 router.post("/", async (req, res) => {

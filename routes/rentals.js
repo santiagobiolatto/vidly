@@ -6,15 +6,17 @@ const { Customer } = require("../models/customer");
 const { rentalValidation } = require("../validators/validator");
 const mongoose = require("mongoose");
 const Fawn = require("fawn");
+const auth = require('../middleware/auth');
+const admin = require('../middleware/admin');
 
 Fawn.init(mongoose);
 
-router.get("/", async (req, res) => {
+router.get("/",[auth, admin], async (req, res) => {
   const rentals = await Rental.findById(req.params.id).sort({ dateOut: -1 });
   res.send(rentals);
 });
 
-router.post("/", async (req, res) => {
+router.post("/",[auth, admin], async (req, res) => {
   const { error } = rentalValidation(req.body);
   if (error) {
     res.status(400).send(error.details[0].message);
@@ -66,7 +68,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.get('/:id', async(req, res)=>{
+router.get('/:id',[auth, admin], async(req, res)=>{
   const idRental = mongoose.Types.ObjectId.isValid(req.params.id);
   if (!idRental) {
     res.status(400).send("Invalid movie ID");
@@ -80,7 +82,7 @@ router.get('/:id', async(req, res)=>{
   res.send(rental);
 });
 
-router.put('/:id', async (req, res)=>{
+router.put('/:id',[auth, admin], async (req, res)=>{
   const idRental = mongoose.Types.ObjectId.isValid(req.params.id);
   if (!idRental) {
     res.status(400).send("Invalid rental ID");
@@ -102,7 +104,7 @@ router.put('/:id', async (req, res)=>{
   req.send(rental);
 });
 
-router.delete('/:id', async(req, res)=>{
+router.delete('/:id',[auth, admin], async(req, res)=>{
   const idRental = mongoose.Types.ObjectId.isValid(req.params.id);
   if (!idRental) {
     res.status(400).send("Invalid rental ID");

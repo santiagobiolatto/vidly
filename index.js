@@ -1,54 +1,26 @@
 const config = require("./config/config");
-const express = require("express");
+const logger = require("./utils/logger");
 const helmet = require("helmet");
 const morgan = require("morgan");
 const debuggerStartUp = require("debug")("app:startup");
-const db = require("./database/index");
+const express = require("express");
 const app = express();
 
-//Routers exports
-const genres = require("./routes/genres");
-const customers = require("./routes/customers");
-const movies = require("./routes/movies");
-const rentals = require("./routes/rentals");
-const users = require("./routes/users");
-const auth = require("./routes/auth");
+//Initializations
+require("express-async-errors");
+require("./database/index");
+require("./routes")(app);
 
-//MongoDB connection
-/*
-mongoose
-  .connect(config.serverDb, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false,
-    useCreateIndex: true,
-  })
-  .then(() => {
-    debuggerDb("Connected to MongoDB...");
-  })
-  .catch((err) => {
-    debuggerDb("Could not connect to MongoDB..", err);
-  });
-*/
-//Middleware
-app.use(express.json());
+//Middlewares
 app.use(helmet());
 if (config.env === "development") {
   app.use(morgan("dev"));
   debuggerStartUp("Morgan enable..");
 }
 
-db.on("error", console.error.bind(console, "MongoDB connection error:"));
-
-//Routes
-app.use("/api/genres", genres);
-app.use("/api/customers", customers);
-app.use("/api/movies", movies);
-app.use("/api/rentals", rentals);
-app.use("/api/users", users);
-app.use("/api/auth", auth);
-
 //Server start
-app.listen(config.serverPort, () => {
-  debuggerStartUp(`Listening on port ${config.serverPort}..`);
+const server = app.listen(config.serverPort, () => {
+  logger.info(`Listening on port ${config.serverPort}..`);
 });
+
+module.exports = server;

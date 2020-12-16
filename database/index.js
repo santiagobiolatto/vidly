@@ -1,20 +1,21 @@
 const mongoose = require("mongoose");
+const logger = require("../utils/logger");
 const config = require("../config/config");
-const debuggerDb = require("debug")("app:db");
+
+let dburl = config.serverDb;
+if(config.env === 'test'){
+  dburl = config.serverDbTest;
+}else{
+  dburl = config.serverDb;
+}
 
 mongoose
-  .connect(config.serverDb, {
+  .connect(dburl, {
     useNewUrlParser: true,
-    useUnifiedTopology: true,
     useFindAndModify: false,
+    useUnifiedTopology: true,
     useCreateIndex: true,
   })
   .then(() => {
-    debuggerDb("Connected to MongoDB...");
-  })
-  .catch((err) => {
-    debuggerDb(config.serverDb, err.message);
+    logger.info(`Connected to ${config.env} MongoDB`);
   });
-const db = mongoose.connection;
-
-module.exports = db;

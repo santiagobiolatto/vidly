@@ -4,13 +4,15 @@ const { Movie } = require("../models/movie");
 const { Genre } = require("../models/genre");
 const { movieValidator } = require("../validators/validator");
 const mongoose = require("mongoose");
+const auth = require('../middleware/auth');
+const admin = require('../middleware/admin');
 
 router.get("/", async (req, res) => {
   const movies = await Movie.find().sort({ name: 1 });
   res.send(movies);
 });
 
-router.post("/", async (req, res) => {
+router.post("/",[auth, admin], async (req, res) => {
   const { error } = movieValidator(req.body);
   if (error) {
     res.status(400).send(error.details[0].message);
@@ -54,7 +56,7 @@ router.get("/:id", async (req, res) => {
   res.send(movie);
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id",[auth, admin], async (req, res) => {
   const idMovie = mongoose.Types.ObjectId.isValid(req.params.id);
   if (!idMovie) {
     res.status(400).send("Invalid movie ID");
@@ -89,7 +91,7 @@ router.put("/:id", async (req, res) => {
   res.send(movie);
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id",[auth, admin], async (req, res) => {
   const idMovie = mongoose.Types.ObjectId.isValid(req.params.id);
   if (!idMovie) {
     res.status(400).send("Invalid movie ID");
